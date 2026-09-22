@@ -1,30 +1,40 @@
 from dataclasses import dataclass
-from .product_category import ProductType
-from .pricing import *
+from model.product.product_category import ProductType
+from model.product.pricing import PricingPolicy, Normal
 
 # Objetos de Valor
 @dataclass()
 class SKU:
     code: str
-    
+
+    def __post_init__(self):
+        if not self.code or not self.code.strip():
+            raise ValueError("SKU não pode ser vazio")
+
     def __str__(self):
         return self.code
 
 @dataclass()
 class Price:
     amount: float
-    
+
+    def __post_init__(self):
+        if self.amount < 0:
+            raise ValueError("Price não pode ser negativo")
+
     def __str__(self):
         return f"R$ {self.amount:.2f}"
     
 
 class Product:
     def __init__(self, sku: SKU, name: str, price: Price, category: ProductType, policy: PricingPolicy = None):
+        if not name or not name.strip():
+            raise ValueError("name do produto não pode ser vazio")
         self._sku = sku
         self._name = name
         self._price = price
         self._category = category
-        self._policy = policy
+        self._policy = policy if policy is not None else Normal()
 
     # Getters
     @property
@@ -54,7 +64,7 @@ class Product:
 
     # Métodos
     def final_price(self) -> float:
-        return self._price.amount + self._policy.factor()
+        return self._price.amount * self._policy.factor()
 
     def __repr__(self):
         return (f"Product(sku={self._sku!r}, name={self._name!r}, "

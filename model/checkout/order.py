@@ -4,14 +4,14 @@ from model.checkout.cart import Cart
 
 class OrderStatus(Enum):
     PENDING = 1
-    PAID = 1
-    FULFILLED = 1
+    PAID = 2
+    FULFILLED = 3
     
 class Order:
     _TRANSITIONS = {
         OrderStatus.PENDING:   OrderStatus.PAID,
         OrderStatus.PAID:      OrderStatus.FULFILLED,
-        OrderStatus.FULFILLED: OrderStatus.PENDING,
+        # FULFILLED é o estado final: sem próxima transição.
     }
 
     def __init__(self, cart: Cart):
@@ -36,7 +36,9 @@ class Order:
         return sum(i.subtotal() for i in self._items)
 
     def advance_status(self) -> None:
-        next_status = self._TRANSITIONS[self._status]
+        next_status = self._TRANSITIONS.get(self._status)
+        if next_status is None:
+            raise ValueError(f"Order #{self._order_id} já está {self._status.name}, não há próximo status")
         self._status = next_status
 
     def __str__(self):

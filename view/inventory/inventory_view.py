@@ -14,7 +14,7 @@ class InventoryView:
     def prompt_data(self) -> dict:
         return {
             "sku": input("SKU: "),
-            "quantity": any(input("Quantity: ")),
-            "min_stock": any(input("Min stock: ")),
+            "quantity": int(input("Quantity: ")),
+            "min_stock": int(input("Min stock: ")),
             "shelf": input("Shelf code: "),
         }

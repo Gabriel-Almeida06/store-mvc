@@ -25,4 +25,5 @@ class CheckoutView:
         print(f"Order #{order.order_id} - Status {order.status.name}")
 
     def confirm_prompt(self) -> bool:
-        return input("Confirm order? (y/n): ").strip().lower() == "yes"
+        answer = input("Confirm order? (y/n): ").strip().lower()
+        return answer in ("y", "yes", "s", "sim")
